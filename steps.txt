@@ -1,0 +1,16 @@
+## mxnet
+
+mkdir onnx-squeezenet && cd onnx-squeezenet
+curl -O https://s3.amazonaws.com/model-server/models/onnx-squeezenet/squeezenet.onnx
+curl -O https://s3.amazonaws.com/model-server/models/onnx-squeezenet/signature.json
+curl -O https://s3.amazonaws.com/model-server/models/onnx-squeezenet/synset.txt
+
+mxnet-model-export --model-name onnx-squeezenet --model-path .
+
+mxnet-model-server --models squeezenet=onnx-squeezenet.model
+
+curl -X POST http://127.0.0.1:8080/squeezenet/predict -F "data_0=@kitten.jpg"
+
+## mxnet docker
+
+docker run -itd --name mms -p 81:8080 awsdeeplearningteam/mms_cpu mxnet-model-server start --mms-config /mxnet_model_server/mms_app_cpu.conf
